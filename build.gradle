@@ -1,0 +1,33 @@
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'eclipse'
+
+// Dedicated Thread Example
+mainClassName = "nl.cwi.crisp.examples.lambda.DedicatedThreadExample"
+
+// Shared Thread Pool Example
+//mainClassName = "nl.cwi.crisp.examples.lambda.SharedThreadPoolExample"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+eclipse {
+	jdt {
+		sourceCompatibility = 1.8
+		targetCompatibility = 1.8
+	}
+}
+
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	compile 'com.codahale.metrics:metrics-core:3.0.0'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.6'
+}
+
