@@ -2,9 +2,10 @@ package nl.cwi.crisp.lambda;
 
 import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A simple ring implementation of a set of {@link Actor}s to provide an
@@ -18,7 +19,7 @@ public class SharedMessageQueue extends LinkedBlockingQueue<Runnable> implements
 
 	private static final long serialVersionUID = 1L;
 
-	private final ExecutorService E = Executors.newFixedThreadPool(8);
+	private final ScheduledExecutorService E = Executors.newScheduledThreadPool(8);
 	private final BlockingQueue<Actor> actors = new LinkedBlockingQueue<>();
 	private Iterator<Actor> iterator;
 
@@ -39,6 +40,18 @@ public class SharedMessageQueue extends LinkedBlockingQueue<Runnable> implements
 				}
 			}
 		}.start();
+		E.scheduleAtFixedRate(new Runnable() {
+			@Override
+			public void run() {
+				boolean empty = true;
+				for (Actor a : actors) {
+					empty = a.getQueue().isEmpty() && empty;
+				}
+				if (empty) {
+					E.shutdownNow();
+				}
+			}
+		}, 0, 10, TimeUnit.SECONDS);
 	}
 
 	void register(Actor actor) {

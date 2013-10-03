@@ -16,9 +16,11 @@ public class SharedThreadPoolPing extends SharedThreadPoolActor {
 
 	public void ping() {
 		send(pong, () -> {
-			if (Math.random() > 0.00001) {
+			if (Math.random() > 0.001) {
 				pong.pong(UUID.randomUUID().toString());
 			} else {
+//				System.out.println("exiting ... " + this);
+				getQueue().clear();
 				pong.pong("exit");
 			}
 		});

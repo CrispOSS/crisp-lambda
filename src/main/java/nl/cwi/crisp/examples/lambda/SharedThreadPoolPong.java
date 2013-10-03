@@ -17,7 +17,11 @@ public class SharedThreadPoolPong extends SharedThreadPoolActor {
 	public void pong(final String s) {
 		send(ping, () -> {
 //			System.out.println("Ping received: " + s);
-			ping.ping();
+			if (!"exit".equals(s)) {
+				ping.ping();
+			} else {
+				getQueue().clear();
+			}
 		});
 	}
 	
